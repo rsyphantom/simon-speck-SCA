@@ -40,7 +40,6 @@ void encrypt(uint16_t *pt, uint16_t *ct, uint16_t *key) {
     
     uint16_t l[3];
 
-    // 初始轮密钥和 L 值
     round_keys[0] = key[0];  // k0
     l[0] = key[1];           // l0
     l[1] = key[2];           // l1
@@ -54,17 +53,16 @@ void encrypt(uint16_t *pt, uint16_t *ct, uint16_t *key) {
         uint16_t tmp_k = round_keys[i];
 
         if (i ==0) {
-            trigger_high(); // 仅在第一轮开始时拉高
+            trigger_high(); 
         }
         
-        // 确保 enc_one_round 不包含触发器
+
         enc_one_round(&y, &x, round_keys[i]);
         
         if (i == 0) {
-            trigger_low();  // 仅在第一轮结束时拉低
+            trigger_low(); 
         }
-        
-        // 对应 key_schedule_round 中的密钥扩展逻辑
+
         key_schedule_round(&l[i % 3], tmp_k, i);
     }
 
@@ -75,7 +73,7 @@ void encrypt(uint16_t *pt, uint16_t *ct, uint16_t *key) {
 
 uint8_t get_key(uint8_t* k, uint8_t len)
 {
-   key[0] = (k[1] << 8) | k[0];  // 将前 2 字节转换为 16 位
+   key[0] = (k[1] << 8) | k[0]; 
    key[1] = (k[3] << 8) | k[2];
    key[2] = (k[5] << 8) | k[4];
    key[3] = (k[7] << 8) | k[6];
@@ -84,10 +82,10 @@ uint8_t get_key(uint8_t* k, uint8_t len)
 
 uint8_t get_pt(uint8_t* pt, uint8_t len)
 {
-   uint16_t pt16[2];  // 16 位输入数据
+   uint16_t pt16[2];  
 
-   pt16[0] = (pt[1] << 8) | pt[0];  // 将前 2 字节转换为 16 位
-   pt16[1] = (pt[3] << 8) | pt[2];  // 将后 2 字节转换为 16 位
+   pt16[0] = (pt[1] << 8) | pt[0];  
+   pt16[1] = (pt[3] << 8) | pt[2];  
 
 	trigger_high();
    
